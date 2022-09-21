@@ -1,21 +1,26 @@
 import {
-    Avatar,
     Box,
     Button,
-    Checkbox,
+    // Checkbox,
     Container,
     CssBaseline,
-    FormControlLabel,
-    Grid,
-    Link,
+    // FormControlLabel,
+    // Grid,
+    // Link,
     TextField,
     Typography
 } from "@mui/material"
-import {Fragment, useState} from "react";
+import {
+    // Fragment,
+    useState
+} from "react";
 import http from "../../http";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useNavigate} from "react-router-dom";
 
 const Login = () => {
+
+    const navigate = useNavigate()
 
     const [login, setLogin] = useState('')
     const [senha, setSenha] = useState('')
@@ -27,9 +32,12 @@ const Login = () => {
             .then(resposta => {
                 console.log('Tipo: ' + resposta.data.tipo)
                 console.log('Token: ' + resposta.data.token)
+                localStorage.setItem('token', resposta.data.token)
+                navigate('/dashboard')
             }).catch(erro => {
                 console.log('ERRO')
                 console.log(erro)
+                alert('Um erro ocorreu, veja o console para detalhes')
             })
     }
 
@@ -48,7 +56,7 @@ const Login = () => {
                     }}
                 >
                     <img src="/imagens/ifpb.png" alt="Logo do IFPB" />
-                    <Typography mt={5} sx={{'font-weight': 'bold'}}>Acesso ao sistema de monitoria do IFPB</Typography>
+                    <Typography mt={5} sx={{fontWeight: 'bold'}}>Acesso ao sistema de monitoria do IFPB</Typography>
                     <Box component="form" onSubmit={logar} noValidate sx={{ mt: 3 }}>
                         <TextField
                             margin="normal"
