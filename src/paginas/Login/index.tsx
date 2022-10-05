@@ -11,12 +11,14 @@ import {
     Typography
 } from "@mui/material"
 import {
+    useContext,
     // Fragment,
     useState
 } from "react";
 import http from "../../http";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../Contexts/AuthContext";
 
 const Login = () => {
 
@@ -25,20 +27,13 @@ const Login = () => {
     const [login, setLogin] = useState('')
     const [senha, setSenha] = useState('')
 
-    const logar = (evento: React.FormEvent<HTMLFormElement>) => {
+    const { signIn } = useAuth()
+
+    const logar = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
 
-        http.post('/auth', {login, senha})
-            .then(resposta => {
-                console.log('Tipo: ' + resposta.data.tipo)
-                console.log('Token: ' + resposta.data.token)
-                localStorage.setItem('token', resposta.data.token)
-                navigate('/dashboard')
-            }).catch(erro => {
-                console.log('ERRO')
-                console.log(erro)
-                alert('Um erro ocorreu, veja o console para detalhes')
-            })
+        await signIn({login, senha})
+        navigate('/dashboard')
     }
 
     const theme = createTheme();

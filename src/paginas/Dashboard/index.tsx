@@ -1,10 +1,11 @@
 import {Navigate} from "react-router-dom";
+import {useAuth} from "../../Contexts/AuthContext";
 
 const Dashboard = () => {
 
-    const token = localStorage.getItem('token')
+    const { user, token } = useAuth()
 
-    if (!token) {
+    if (!user || !token) {
         console.log('NAO AUTENTICADO')
         return <Navigate replace to="/" />
     } else {
