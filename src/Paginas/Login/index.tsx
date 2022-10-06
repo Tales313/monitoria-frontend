@@ -15,7 +15,7 @@ import {
     // Fragment,
     useState
 } from "react";
-import http from "../../http";
+import http from "../../Http";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../Contexts/AuthContext";

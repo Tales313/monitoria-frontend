@@ -1,5 +1,5 @@
 import React, {createContext, ReactNode, useCallback, useState, useContext} from 'react'
-import http from "../http";
+import http from "../Http";
 
 type UserContextProps = {
     children: ReactNode;
