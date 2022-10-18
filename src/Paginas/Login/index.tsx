@@ -15,7 +15,6 @@ import {
     // Fragment,
     useState
 } from "react";
-import http from "../../Http";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../Contexts/AuthContext";
@@ -31,9 +30,9 @@ const Login = () => {
 
     const logar = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
-
-        await signIn({login, senha})
-        navigate('/dashboard')
+        const responseLogin = await signIn({login, senha})
+        console.log(responseLogin)
+        navigate('/vagas')
     }
 
     const theme = createTheme();

@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useCallback, useState, useContext} from 'react'
+import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react'
 import http from "../Http";
 
 type UserContextProps = {
@@ -43,21 +43,18 @@ export const AuthContextProvider = ({children}: UserContextProps) => {
     });
 
     const signIn = useCallback(async ({ login, senha }: SignInCredentials) => {
-        await http
-            .post('/auth', {
-                login,
-                senha,
-            })
+        return await http()
+            .auth(login, senha)
             .then(response => {
-                const { token } = response.data;
+                const {token} = response.data;
                 const user = {login};
                 localStorage.setItem('@Monitoria:token', token);
                 localStorage.setItem('@Monitoria:user', JSON.stringify(user));
-                setData({ token, user });
+                setData({token, user});
             })
             .catch(err => {
                 console.log(err.response.data);
-            });
+            })
     }, []);
 
     const signOut = useCallback(() => {
