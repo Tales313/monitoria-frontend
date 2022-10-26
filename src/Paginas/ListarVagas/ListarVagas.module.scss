@@ -1,6 +1,18 @@
 .vaga {
+    background-color: #FFF;
     &:hover {
         background-color: #c4f2ce;
         cursor: pointer;
+    }
+}
+
+.vagaFim {
+    background-color: gray;
+}
+
+.botaoDesabilitado {
+    background-color: gray;
+    &:hover {
+        cursor: default;
     }
 }

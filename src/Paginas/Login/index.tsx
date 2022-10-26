@@ -30,8 +30,7 @@ const Login = () => {
 
     const logar = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
-        const responseLogin = await signIn({login, senha})
-        console.log(responseLogin)
+        await signIn({login, senha})
         navigate('/vagas')
     }
 
