@@ -58,7 +58,6 @@ const Login = () => {
                             id="email"
                             label="Email"
                             onChange={evento => setLogin(evento.target.value)}
-                            name="login"
                             value={login}
                             autoComplete="email"
                             autoFocus
@@ -70,7 +69,6 @@ const Login = () => {
                             id="password"
                             label="Senha"
                             onChange={evento => setSenha(evento.target.value)}
-                            name="senha"
                             value={senha}
                             type="password"
                             autoComplete="current-password"

@@ -5,8 +5,10 @@ import {useEffect, useState} from "react";
 import http from "../../Http";
 import IEdital from "../../Interfaces/IEdital";
 import styles from './ListarVagas.module.scss';
+import ReactCSSTransitionGroup from 'react-transition-group'; // ES6
 import {
-    Button,
+    Box,
+    Button, Container, CssBaseline,
     Table,
     TableBody,
     TableCell,
@@ -14,6 +16,7 @@ import {
     TableHead,
     TableRow, TextField
 } from "@mui/material";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
 
 const ListarVagas = () => {
 
@@ -56,7 +59,8 @@ const ListarVagas = () => {
         setIdVaga(idVaga)
     }
 
-    const inscrever = async () => {
+    const inscrever = async (evento: React.FormEvent<HTMLFormElement>) => {
+        evento.preventDefault()
         if(!idVaga) {
             alert('Escolha uma vaga para se inscrever')
             return
@@ -104,14 +108,14 @@ const ListarVagas = () => {
         )
     } else {
         return (
-            <>
+            <Container component="main" maxWidth="md">
                 <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>DISCIPLINA</TableCell>
                                 <TableCell>PERIODO</TableCell>
-                                <TableCell>QTD DE VAGAS</TableCell>
+                                <TableCell>VAGAS</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -125,26 +129,38 @@ const ListarVagas = () => {
                     </Table>
                 </TableContainer>
 
-                <TextField
-                    value={notaDisciplina}
-                    onChange={evento => setNotaDisciplina(evento.target.value)}
-                    label='Nota na Disciplina'
-                    variant='standard'
-                    required
-                    type='number'
-                />
+                <Box component="form" onSubmit={inscrever} noValidate sx={{
+                    height: 250,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-evenly',
+                    alignItems: 'flex-start',
+                }}>
+                    <TextField
+                        margin="normal"
+                        value={notaDisciplina}
+                        onChange={evento => setNotaDisciplina(evento.target.value)}
+                        label='Nota na Disciplina'
+                        required
+                    />
 
-                <TextField
-                    value={cre}
-                    onChange={evento => setCre(evento.target.value)}
-                    label='CRE do Aluno'
-                    variant='standard'
-                    required
-                    type='number'
-                />
+                    <TextField
+                        margin="normal"
+                        value={cre}
+                        onChange={evento => setCre(evento.target.value)}
+                        label='CRE do Aluno'
+                        required
+                    />
 
-                <Button id='botaoSubmit' variant='contained' onClick={inscrever} >Inscrever-se</Button>
-            </>
+                    <Button
+                        type="submit"
+                        sx={{alignSelf: 'center'}}
+                        id='botaoSubmit'
+                        variant='contained'
+                        size='large'
+                    >Inscrever-se</Button>
+                </Box>
+            </Container>
         );
     }
 };
