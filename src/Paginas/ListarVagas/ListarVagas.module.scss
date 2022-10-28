@@ -7,11 +7,15 @@
 }
 
 .vagaFim {
-    background-color: gray;
+    background-color: #e3dfd5 !important;
+}
+
+.vagaFim td {
+    color: #fff;
 }
 
 .botaoDesabilitado {
-    background-color: gray;
+    background-color: #e3dfd5 !important;
     &:hover {
         cursor: default;
     }

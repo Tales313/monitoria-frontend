@@ -5,7 +5,6 @@ import {useEffect, useState} from "react";
 import http from "../../Http";
 import IEdital from "../../Interfaces/IEdital";
 import styles from './ListarVagas.module.scss';
-import ReactCSSTransitionGroup from 'react-transition-group'; // ES6
 import {
     Box,
     Button, Container, CssBaseline,
@@ -16,7 +15,6 @@ import {
     TableHead,
     TableRow, TextField
 } from "@mui/material";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
 
 const ListarVagas = () => {
 
@@ -27,7 +25,7 @@ const ListarVagas = () => {
     const [notaDisciplina, setNotaDisciplina] = useState<String>()
     const [cre, setCre] = useState<String>()
     const [proximaOpcao, setProximaOpcao] = useState<Number>()
-    const navigate = useNavigate()
+    const [encerrado, setEncerrado] = useState(false)
 
     useEffect(() => {
 
@@ -61,6 +59,7 @@ const ListarVagas = () => {
 
     const inscrever = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
+
         if(!idVaga) {
             alert('Escolha uma vaga para se inscrever')
             return
@@ -78,20 +77,15 @@ const ListarVagas = () => {
         else
             alert('Inscrito na segunda opção com sucesso')
 
+        setNotaDisciplina('')
+        setCre('')
+
         const respostaProximaOpcao = await http().get('/inscricoes/proxima_opcao', token)
         setProximaOpcao(respostaProximaOpcao.data.opcao)
 
         let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)
         if(respostaProximaOpcao.data.opcao === -1) {
-            let botao = document.getElementById('botaoSubmit') as HTMLButtonElement
-            if (botao) {
-                botao.remove()
-                botao.classList.add(styles.botaoDesabilitado)
-            }
-            vagas.forEach(vaga => {
-                vaga.classList.remove(styles.vaga)
-                vaga.classList.add(styles.vagaFim)
-            })
+            setEncerrado(true)
         } else {
             vagas.forEach(vaga => vaga.style.backgroundColor = 'white')
             setIdVaga(NaN)
@@ -100,12 +94,6 @@ const ListarVagas = () => {
 
     if (!user || !token) {
         return <Navigate replace to="/"/>
-    } else if (proximaOpcao === -1) {
-        return (
-            <>
-                <p>voce ja se inscreveu nas duas opções</p>
-            </>
-        )
     } else {
         return (
             <Container component="main" maxWidth="md">
@@ -120,7 +108,10 @@ const ListarVagas = () => {
                         </TableHead>
                         <TableBody>
                             {vagas.map(item =>
-                                <TableRow id={'vaga-'+item.id} className={styles.vaga} key={item.id} onClick={() => selecionarDisciplina(item.id)}>
+                                <TableRow
+                                    id={'vaga-'+item.id}
+                                    className={encerrado? styles.vagaFim : styles.vaga}
+                                    key={item.id} onClick={() => selecionarDisciplina(item.id)}>
                                     <TableCell>{item.disciplina}</TableCell>
                                     <TableCell>{item.periodo}</TableCell>
                                     <TableCell>{item.quantidade}</TableCell>
@@ -137,6 +128,7 @@ const ListarVagas = () => {
                     alignItems: 'flex-start',
                 }}>
                     <TextField
+                        disabled={encerrado}
                         margin="normal"
                         value={notaDisciplina}
                         onChange={evento => setNotaDisciplina(evento.target.value)}
@@ -145,6 +137,7 @@ const ListarVagas = () => {
                     />
 
                     <TextField
+                        disabled={encerrado}
                         margin="normal"
                         value={cre}
                         onChange={evento => setCre(evento.target.value)}
@@ -153,6 +146,7 @@ const ListarVagas = () => {
                     />
 
                     <Button
+                        className={encerrado? styles.botaoDesabilitado : ''}
                         type="submit"
                         sx={{alignSelf: 'center'}}
                         id='botaoSubmit'
