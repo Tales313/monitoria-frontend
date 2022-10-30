@@ -1,4 +1,4 @@
-import {Navigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import {useAuth} from "../../Contexts/AuthContext";
 import IVaga from "../../Interfaces/IVaga";
 import {useEffect, useState} from "react";
@@ -6,7 +6,8 @@ import http from "../../Http";
 import IEdital from "../../Interfaces/IEdital";
 import styles from './ListarVagas.module.scss';
 import {
-    Button,
+    Box,
+    Button, Container, CssBaseline,
     Table,
     TableBody,
     TableCell,
@@ -23,20 +24,26 @@ const ListarVagas = () => {
     const [idVaga, setIdVaga] = useState<Number>()
     const [notaDisciplina, setNotaDisciplina] = useState<String>()
     const [cre, setCre] = useState<String>()
+    const [proximaOpcao, setProximaOpcao] = useState<Number>()
+    const [encerrado, setEncerrado] = useState(false)
 
     useEffect(() => {
-        http().get('/editais/ativo', token)
-            .then(respostaEdital => {
-                setEdital(respostaEdital.data)
-                http().get('/vagas/' + respostaEdital.data.id, token)
-                    .then(respostaVagas => {
-                        setVagas(respostaVagas.data)
-                    }).catch(erro => {
-                        console.log(erro)
-                    })
-            }).catch(erro => {
-                console.log(erro)
-            })
+
+        const chamarEndpointProximaOpcao = async () => {
+            const resposta = await http().get('/inscricoes/proxima_opcao', token)
+            setProximaOpcao(resposta.data.opcao)
+        }
+
+        const chamarEditalEVagas = async () => {
+            const respostaEdital = await http().get('/editais/ativo', token)
+            const respostaVagas = await http().get('/vagas/' + respostaEdital.data.id, token)
+            setEdital(respostaEdital.data)
+            setVagas(respostaVagas.data)
+        }
+
+        chamarEndpointProximaOpcao()
+        chamarEditalEVagas()
+
     }, [])
 
     const selecionarDisciplina = (idVaga: number) => {
@@ -50,66 +57,104 @@ const ListarVagas = () => {
         setIdVaga(idVaga)
     }
 
-    const inscrever = () => {
+    const inscrever = async (evento: React.FormEvent<HTMLFormElement>) => {
+        evento.preventDefault()
+
+        if(!idVaga) {
+            alert('Escolha uma vaga para se inscrever')
+            return
+        }
         const body = {
-            opcao: 1,
+            opcao: proximaOpcao,
             notaDisciplina,
             cre,
             idVaga,
         }
-        http().post('/inscricoes', token, body)
-            .then(resposta => {
-                alert('Inscrito com sucesso')
-            }).catch(erro => {
-                console.log(erro)
-            })
+
+        const respostaInscricao = await http().post('/inscricoes', token, body)
+        if(respostaInscricao.data.opcao === 1)
+            alert('Inscrito na primeira opção com sucesso')
+        else
+            alert('Inscrito na segunda opção com sucesso')
+
+        setNotaDisciplina('')
+        setCre('')
+
+        const respostaProximaOpcao = await http().get('/inscricoes/proxima_opcao', token)
+        setProximaOpcao(respostaProximaOpcao.data.opcao)
+
+        let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)
+        if(respostaProximaOpcao.data.opcao === -1) {
+            setEncerrado(true)
+        } else {
+            vagas.forEach(vaga => vaga.style.backgroundColor = 'white')
+            setIdVaga(NaN)
+        }
     }
 
     if (!user || !token) {
         return <Navigate replace to="/"/>
     } else {
         return (
-            <>
+            <Container component="main" maxWidth="md">
                 <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>
                                 <TableCell>DISCIPLINA</TableCell>
                                 <TableCell>PERIODO</TableCell>
-                                <TableCell>QTD DE VAGAS</TableCell>
+                                <TableCell>VAGAS</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {vagas.map(item =>
-                            <TableRow id={'vaga-'+item.id} className={styles.vaga} key={item.id} onClick={() => selecionarDisciplina(item.id)}>
-                                <TableCell>{item.disciplina}</TableCell>
-                                <TableCell>{item.periodo}</TableCell>
-                                <TableCell>{item.quantidade}</TableCell>
-                            </TableRow>)}
+                                <TableRow
+                                    id={'vaga-'+item.id}
+                                    className={encerrado? styles.vagaFim : styles.vaga}
+                                    key={item.id} onClick={() => selecionarDisciplina(item.id)}>
+                                    <TableCell>{item.disciplina}</TableCell>
+                                    <TableCell>{item.periodo}</TableCell>
+                                    <TableCell>{item.quantidade}</TableCell>
+                                </TableRow>)}
                         </TableBody>
                     </Table>
                 </TableContainer>
 
-                <TextField
-                    value={notaDisciplina}
-                    onChange={evento => setNotaDisciplina(evento.target.value)}
-                    label='Nota na Disciplina'
-                    variant='standard'
-                    required
-                    type='number'
-                />
+                <Box component="form" onSubmit={inscrever} noValidate sx={{
+                    height: 250,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-evenly',
+                    alignItems: 'flex-start',
+                }}>
+                    <TextField
+                        disabled={encerrado}
+                        margin="normal"
+                        value={notaDisciplina}
+                        onChange={evento => setNotaDisciplina(evento.target.value)}
+                        label='Nota na Disciplina'
+                        required
+                    />
 
-                <TextField
-                    value={cre}
-                    onChange={evento => setCre(evento.target.value)}
-                    label='CRE do Aluno'
-                    variant='standard'
-                    required
-                    type='number'
-                />
+                    <TextField
+                        disabled={encerrado}
+                        margin="normal"
+                        value={cre}
+                        onChange={evento => setCre(evento.target.value)}
+                        label='CRE do Aluno'
+                        required
+                    />
 
-                <Button variant='contained' onClick={inscrever} >Inscrever-se</Button>
-            </>
+                    <Button
+                        className={encerrado? styles.botaoDesabilitado : ''}
+                        type="submit"
+                        sx={{alignSelf: 'center'}}
+                        id='botaoSubmit'
+                        variant='contained'
+                        size='large'
+                    >Inscrever-se</Button>
+                </Box>
+            </Container>
         );
     }
 };

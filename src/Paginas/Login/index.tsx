@@ -30,8 +30,7 @@ const Login = () => {
 
     const logar = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
-        const responseLogin = await signIn({login, senha})
-        console.log(responseLogin)
+        await signIn({login, senha})
         navigate('/vagas')
     }
 
@@ -59,7 +58,6 @@ const Login = () => {
                             id="email"
                             label="Email"
                             onChange={evento => setLogin(evento.target.value)}
-                            name="login"
                             value={login}
                             autoComplete="email"
                             autoFocus
@@ -71,7 +69,6 @@ const Login = () => {
                             id="password"
                             label="Senha"
                             onChange={evento => setSenha(evento.target.value)}
-                            name="senha"
                             value={senha}
                             type="password"
                             autoComplete="current-password"
