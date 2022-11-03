@@ -7,7 +7,7 @@ import IEdital from "../../Interfaces/IEdital";
 import styles from './ListarVagas.module.scss';
 import {
     Box,
-    Button, Container, CssBaseline,
+    Button, Container,
     Table,
     TableBody,
     TableCell,
@@ -27,18 +27,38 @@ const ListarVagas = () => {
     const [proximaOpcao, setProximaOpcao] = useState<Number>()
     const [encerrado, setEncerrado] = useState(false)
 
+    const navigate = useNavigate()
+
+    const procedimentoDeErro = (e: any) => {
+        if(e.response.data.status === 500) {
+            alert("Erro desconhecido, entre em contato com o Administrador ou tente novamente")
+            navigate("/")
+        } else
+            alert(e.response.data.message)
+    }
+
     useEffect(() => {
 
         const chamarEndpointProximaOpcao = async () => {
-            const resposta = await http().get('/inscricoes/proxima_opcao', token)
-            setProximaOpcao(resposta.data.opcao)
+            try {
+                const resposta = await http().get('/inscricoes/proxima_opcao', token)
+                setProximaOpcao(resposta.data.opcao)
+                if(resposta.data.opcao === -1)
+                    setEncerrado(true)
+            } catch (e: any) {
+                procedimentoDeErro(e)
+            }
         }
 
         const chamarEditalEVagas = async () => {
-            const respostaEdital = await http().get('/editais/ativo', token)
-            const respostaVagas = await http().get('/vagas/' + respostaEdital.data.id, token)
-            setEdital(respostaEdital.data)
-            setVagas(respostaVagas.data)
+            try {
+                const respostaEdital = await http().get('/editais/ativo', token)
+                const respostaVagas = await http().get('/vagas/' + respostaEdital.data.id, token)
+                setEdital(respostaEdital.data)
+                setVagas(respostaVagas.data)
+            } catch (e: any) {
+                procedimentoDeErro(e)
+            }
         }
 
         chamarEndpointProximaOpcao()
@@ -71,25 +91,35 @@ const ListarVagas = () => {
             idVaga,
         }
 
-        const respostaInscricao = await http().post('/inscricoes', token, body)
-        if(respostaInscricao.data.opcao === 1)
-            alert('Inscrito na primeira opção com sucesso')
-        else
-            alert('Inscrito na segunda opção com sucesso')
+        try {
+            const respostaInscricao = await http().post('/inscricoes', token, body)
+            if(respostaInscricao.data.opcao === 1)
+                alert('Inscrito na primeira opção com sucesso')
+            else
+                alert('Inscrito na segunda opção com sucesso')
+        } catch (e: any) {
+            alert(e.response.data.message)
+            return
+        }
 
         setNotaDisciplina('')
         setCre('')
 
-        const respostaProximaOpcao = await http().get('/inscricoes/proxima_opcao', token)
-        setProximaOpcao(respostaProximaOpcao.data.opcao)
+        try {
+            const respostaProximaOpcao = await http().get('/inscricoes/proxima_opcao', token)
+            setProximaOpcao(respostaProximaOpcao.data.opcao)
 
-        let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)
-        if(respostaProximaOpcao.data.opcao === -1) {
-            setEncerrado(true)
-        } else {
-            vagas.forEach(vaga => vaga.style.backgroundColor = 'white')
-            setIdVaga(NaN)
+            let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)
+            if(respostaProximaOpcao.data.opcao === -1) {
+                setEncerrado(true)
+            } else {
+                vagas.forEach(vaga => vaga.style.backgroundColor = 'white')
+                setIdVaga(NaN)
+            }
+        } catch (e: any) {
+            alert(e.response.data.message)
         }
+
     }
 
     if (!user || !token) {
