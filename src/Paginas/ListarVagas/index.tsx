@@ -15,6 +15,7 @@ import {
     TableHead,
     TableRow, TextField
 } from "@mui/material";
+import Menu from "../../Componentes/Menu";
 
 const ListarVagas = () => {
 
@@ -126,65 +127,68 @@ const ListarVagas = () => {
         return <Navigate replace to="/"/>
     } else {
         return (
-            <Container component="main" maxWidth="md">
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>DISCIPLINA</TableCell>
-                                <TableCell>PERIODO</TableCell>
-                                <TableCell>VAGAS</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {vagas.map(item =>
-                                <TableRow
-                                    id={'vaga-'+item.id}
-                                    className={encerrado? styles.vagaFim : styles.vaga}
-                                    key={item.id} onClick={() => selecionarDisciplina(item.id)}>
-                                    <TableCell>{item.disciplina}</TableCell>
-                                    <TableCell>{item.periodo}</TableCell>
-                                    <TableCell>{item.quantidade}</TableCell>
-                                </TableRow>)}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+            <>
+                <Menu/>
+                <Container component="main" maxWidth="md">
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>DISCIPLINA</TableCell>
+                                    <TableCell>PERIODO</TableCell>
+                                    <TableCell>VAGAS</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {vagas.map(item =>
+                                    <TableRow
+                                        id={'vaga-'+item.id}
+                                        className={encerrado? styles.vagaFim : styles.vaga}
+                                        key={item.id} onClick={() => selecionarDisciplina(item.id)}>
+                                        <TableCell>{item.disciplina}</TableCell>
+                                        <TableCell>{item.periodo}</TableCell>
+                                        <TableCell>{item.quantidade}</TableCell>
+                                    </TableRow>)}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
 
-                <Box component="form" onSubmit={inscrever} noValidate sx={{
-                    height: 250,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-evenly',
-                    alignItems: 'flex-start',
-                }}>
-                    <TextField
-                        disabled={encerrado}
-                        margin="normal"
-                        value={notaDisciplina}
-                        onChange={evento => setNotaDisciplina(evento.target.value)}
-                        label='Nota na Disciplina'
-                        required
-                    />
+                    <Box component="form" onSubmit={inscrever} noValidate sx={{
+                        height: 250,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'flex-start',
+                    }}>
+                        <TextField
+                            disabled={encerrado}
+                            margin="normal"
+                            value={notaDisciplina}
+                            onChange={evento => setNotaDisciplina(evento.target.value)}
+                            label='Nota na Disciplina'
+                            required
+                        />
 
-                    <TextField
-                        disabled={encerrado}
-                        margin="normal"
-                        value={cre}
-                        onChange={evento => setCre(evento.target.value)}
-                        label='CRE do Aluno'
-                        required
-                    />
+                        <TextField
+                            disabled={encerrado}
+                            margin="normal"
+                            value={cre}
+                            onChange={evento => setCre(evento.target.value)}
+                            label='CRE do Aluno'
+                            required
+                        />
 
-                    <Button
-                        className={encerrado? styles.botaoDesabilitado : ''}
-                        type="submit"
-                        sx={{alignSelf: 'center'}}
-                        id='botaoSubmit'
-                        variant='contained'
-                        size='large'
-                    >Inscrever-se</Button>
-                </Box>
-            </Container>
+                        <Button
+                            className={encerrado? styles.botaoDesabilitado : ''}
+                            type="submit"
+                            sx={{alignSelf: 'center'}}
+                            id='botaoSubmit'
+                            variant='contained'
+                            size='large'
+                        >Inscrever-se</Button>
+                    </Box>
+                </Container>
+            </>
         );
     }
 };
