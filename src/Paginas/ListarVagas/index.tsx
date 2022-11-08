@@ -40,6 +40,9 @@ const ListarVagas = () => {
 
     useEffect(() => {
 
+        if (!user || !token)
+            return
+
         const chamarEndpointProximaOpcao = async () => {
             try {
                 const resposta = await http().get('/inscricoes/proxima_opcao', token)
