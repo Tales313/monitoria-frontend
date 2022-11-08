@@ -13,7 +13,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow, TextField
+    TableRow, TextField, Typography
 } from "@mui/material";
 import Menu from "../../Componentes/Menu";
 
@@ -129,6 +129,9 @@ const ListarVagas = () => {
         return (
             <>
                 <Menu/>
+                <Typography className={encerrado? '' : styles.msgEncerrado} mt={5} mb={5} sx={{fontWeight: 'bold', textAlign: 'center'}}>
+                    Você ja se inscreveu nas duas opções. Aguarde o resultado.
+                </Typography>
                 <Container component="main" maxWidth="md">
                     <TableContainer>
                         <Table>
