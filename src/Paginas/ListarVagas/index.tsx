@@ -2,7 +2,11 @@ import {Navigate, useNavigate} from "react-router-dom";
 import {useAuth} from "../../Contexts/AuthContext";
 import IVaga from "../../Interfaces/IVaga";
 import {useEffect, useState} from "react";
-import http from "../../Http";
+import {
+    getVagasPorEdital,
+    getEditalAtivo,
+    getProximaOpcao,
+    postInscricao} from "../../Http";
 import IEdital from "../../Interfaces/IEdital";
 import styles from './ListarVagas.module.scss';
 import {
@@ -16,16 +20,17 @@ import {
     TableRow, TextField, Typography
 } from "@mui/material";
 import Menu from "../../Componentes/Menu";
+import IInscricaoRequest from "../../Interfaces/IInscricaoRequest";
 
 const ListarVagas = () => {
 
     const { user, token } = useAuth()
     const [edital, setEdital] = useState<IEdital>()
     const [vagas, setVagas] = useState<IVaga[]>([])
-    const [idVaga, setIdVaga] = useState<Number>()
-    const [notaDisciplina, setNotaDisciplina] = useState<String>()
-    const [cre, setCre] = useState<String>()
-    const [proximaOpcao, setProximaOpcao] = useState<Number>()
+    const [idVaga, setIdVaga] = useState<number>()
+    const [notaDisciplina, setNotaDisciplina] = useState<string>('')
+    const [cre, setCre] = useState<string>('')
+    const [proximaOpcao, setProximaOpcao] = useState<number>()
     const [encerrado, setEncerrado] = useState(false)
 
     const navigate = useNavigate()
@@ -45,7 +50,7 @@ const ListarVagas = () => {
 
         const chamarEndpointProximaOpcao = async () => {
             try {
-                const resposta = await http().get('/inscricoes/proxima_opcao', token)
+                const resposta = await getProximaOpcao(token)
                 setProximaOpcao(resposta.data.opcao)
                 if(resposta.data.opcao === -1)
                     setEncerrado(true)
@@ -56,8 +61,8 @@ const ListarVagas = () => {
 
         const chamarEditalEVagas = async () => {
             try {
-                const respostaEdital = await http().get('/editais/ativo', token)
-                const respostaVagas = await http().get('/vagas/' + respostaEdital.data.id, token)
+                const respostaEdital = await getEditalAtivo(token)
+                const respostaVagas = await getVagasPorEdital(token, respostaEdital.data.id)
                 setEdital(respostaEdital.data)
                 setVagas(respostaVagas.data)
             } catch (e: any) {
@@ -88,15 +93,15 @@ const ListarVagas = () => {
             alert('Escolha uma vaga para se inscrever')
             return
         }
-        const body = {
-            opcao: proximaOpcao,
-            notaDisciplina,
-            cre,
+        const body: IInscricaoRequest = {
+            opcao: proximaOpcao!,
+            notaDisciplina: Number.parseInt(notaDisciplina!),
+            cre: Number.parseInt(cre!),
             idVaga,
         }
 
         try {
-            const respostaInscricao = await http().post('/inscricoes', token, body)
+            const respostaInscricao = await postInscricao(token, body)
             if(respostaInscricao.data.opcao === 1)
                 alert('Inscrito na primeira opção com sucesso')
             else
@@ -110,7 +115,7 @@ const ListarVagas = () => {
         setCre('')
 
         try {
-            const respostaProximaOpcao = await http().get('/inscricoes/proxima_opcao', token)
+            const respostaProximaOpcao = await getProximaOpcao(token)
             setProximaOpcao(respostaProximaOpcao.data.opcao)
 
             let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)

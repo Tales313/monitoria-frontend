@@ -1,5 +1,6 @@
 import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react'
-import http from "../Http";
+import {postAutenticar} from "../Http";
+import IAutenticacaoResponse from "../Interfaces/IAutenticacaoResponse";
 
 type UserContextProps = {
     children: ReactNode;
@@ -22,7 +23,7 @@ interface SignInCredentials {
 interface AuthContextData {
     user: User;
     token: string;
-    signIn(credentials: SignInCredentials): Promise<void>;
+    signIn(credentials: SignInCredentials): Promise<IAutenticacaoResponse>;
     signOut(): void;
 }
 
@@ -43,18 +44,15 @@ export const AuthContextProvider = ({children}: UserContextProps) => {
     });
 
     const signIn = useCallback(async ({ login, senha }: SignInCredentials) => {
-        return await http()
-            .auth(login, senha)
-            .then(response => {
-                const {token} = response.data;
-                const user = {login};
-                localStorage.setItem('@Monitoria:token', token);
-                localStorage.setItem('@Monitoria:user', JSON.stringify(user));
-                setData({token, user});
-            })
-            .catch(err => {
-                console.log(err.response.data);
-            })
+
+        const response = await postAutenticar(login, senha)
+        const token = response.data.token;
+        const user = {login};
+        localStorage.setItem('@Monitoria:token', token);
+        localStorage.setItem('@Monitoria:user', JSON.stringify(user));
+        setData({token, user})
+        return response
+
     }, []);
 
     const signOut = useCallback(() => {
