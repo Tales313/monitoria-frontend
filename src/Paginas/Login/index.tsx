@@ -30,8 +30,12 @@ const Login = () => {
 
     const logar = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
-        await signIn({login, senha})
-        navigate('/vagas')
+        const response = await signIn({login, senha})
+
+        if(response.data.perfil === 'ALUNO')
+            navigate('/vagas')
+        else
+            navigate('/coordenador')
     }
 
     const theme = createTheme();
