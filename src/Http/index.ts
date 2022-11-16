@@ -5,6 +5,9 @@ import IProximaOpcaoResponse from "../Interfaces/IProximaOpcaoResponse";
 import IInscricaoRequest from "../Interfaces/IInscricaoRequest";
 import IInscricaoResponse from "../Interfaces/IInscricaoResponse";
 import IAutenticacaoResponse from "../Interfaces/IAutenticacaoResponse";
+import IEditalRequest from "../Interfaces/IEditalRequest";
+import IVagaRequest from "../Interfaces/IVagaRequest";
+import IVagaResponse from "../Interfaces/IVagaResponse";
 
 const criarRequest = (token: String): AxiosInstance => {
     return axios.create({
@@ -34,6 +37,16 @@ export const getProximaOpcao = (token: String): Promise<IProximaOpcaoResponse> =
 export const postInscricao = (token: String, body: IInscricaoRequest): Promise<IInscricaoResponse> => {
     let request = criarRequest(token)
     return request.post('/inscricoes', body)
+}
+
+export const postEdital = (token: String, body: IEditalRequest): Promise<IEditalResponse> => {
+    let request = criarRequest(token)
+    return request.post('/editais', body)
+}
+
+export const postVaga = (token: String, body: IVagaRequest): Promise<IVagaResponse> => {
+    let request = criarRequest(token)
+    return request.post('/vagas', body)
 }
 
 export const postAutenticar = (login: string, senha: String): Promise<IAutenticacaoResponse> => {
