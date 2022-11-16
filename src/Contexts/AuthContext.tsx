@@ -1,6 +1,7 @@
 import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react'
-import {postAutenticar} from "../Http";
+import {getEditalAtivo, postAutenticar} from "../Http";
 import IAutenticacaoResponse from "../Interfaces/IAutenticacaoResponse";
+import {Navigate} from "react-router-dom";
 
 type UserContextProps = {
     children: ReactNode;
