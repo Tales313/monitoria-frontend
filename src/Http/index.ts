@@ -8,6 +8,7 @@ import IAutenticacaoResponse from "../Interfaces/IAutenticacaoResponse";
 import IEditalRequest from "../Interfaces/IEditalRequest";
 import IVagaRequest from "../Interfaces/IVagaRequest";
 import IVagaResponse from "../Interfaces/IVagaResponse";
+import IResultadosResponse from "../Interfaces/IResultadosResponse";
 
 const criarRequest = (token: String): AxiosInstance => {
     return axios.create({
@@ -47,6 +48,11 @@ export const postEdital = (token: String, body: IEditalRequest): Promise<IEdital
 export const postVaga = (token: String, body: IVagaRequest): Promise<IVagaResponse> => {
     let request = criarRequest(token)
     return request.post('/vagas', body)
+}
+
+export const getResultados = (token: String, editalId: number): Promise<IResultadosResponse> => {
+    let request = criarRequest(token)
+    return request.get('/inscricoes/resultados', { params: { editalId } })
 }
 
 export const postAutenticar = (login: string, senha: String): Promise<IAutenticacaoResponse> => {
