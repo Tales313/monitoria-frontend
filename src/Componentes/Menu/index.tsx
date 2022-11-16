@@ -22,6 +22,9 @@ const NavBar = () => {
               <li>
                   <Link to="/vagas">Vagas</Link>
               </li>
+              <li>
+                  <Link to="/resultados">Resultados</Link>
+              </li>
           </ul>
           <div>
               <LogoutIcon onClick={deslogar}/>
