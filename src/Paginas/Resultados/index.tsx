@@ -38,7 +38,7 @@ const Resultados = () => {
         }
 
         chamarEditalEResultados()
-    }, [])
+    })
 
     const definirCorDaLinha = (resultado: string) => {
         let cor = '#EEE' // cinza = nao classificado

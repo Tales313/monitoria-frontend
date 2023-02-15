@@ -10,7 +10,6 @@ import IEdital from "../../Interfaces/IEdital";
 import {useAuth} from "../../Contexts/AuthContext";
 import {useNavigate} from "react-router-dom";
 import {getEditalAtivo, postEdital, postVaga} from "../../Http";
-import IEditalResponse from "../../Interfaces/IEditalResponse";
 import IEditalRequest from "../../Interfaces/IEditalRequest";
 import IVagaRequest from "../../Interfaces/IVagaRequest";
 
@@ -46,7 +45,7 @@ const Coordenador = () => {
             fimInscricoes: fimInscricoesEdital!.toDate()
         }
         try {
-            const response = await postEdital(token, body)
+            await postEdital(token, body)
             alert('Edital cadastrado com sucesso')
         } catch (e: any) {
             alert(e.response.data.message)
@@ -64,7 +63,7 @@ const Coordenador = () => {
             editalId: edital!.id
         }
         try {
-            const response = await postVaga(token, body)
+            await postVaga(token, body)
             alert('Vaga cadastrada com sucesso')
         } catch (e: any) {
             alert(e.response.data.message)
@@ -83,7 +82,7 @@ const Coordenador = () => {
         }
 
         chamarEditalAtivo()
-    }, [])
+    })
 
     return (
         <>
