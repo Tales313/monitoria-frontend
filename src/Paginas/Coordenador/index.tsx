@@ -82,7 +82,7 @@ const Coordenador = () => {
         }
 
         chamarEditalAtivo()
-    })
+    }, []) // É preciso ter uma lista vazia aqui para que o useEffect não fique sendo chamado infinitamente
 
     return (
         <>

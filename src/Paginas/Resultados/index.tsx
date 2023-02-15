@@ -38,7 +38,7 @@ const Resultados = () => {
         }
 
         chamarEditalEResultados()
-    })
+    }, []) // É preciso ter uma lista vazia aqui para que o useEffect não fique sendo chamado infinitamente
 
     const definirCorDaLinha = (resultado: string) => {
         let cor = '#EEE' // cinza = nao classificado
