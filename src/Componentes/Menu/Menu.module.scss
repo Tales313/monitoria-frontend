@@ -20,7 +20,26 @@
                 font-weight: bold;
                 text-decoration: none;
                 font-size: 1.5rem;
+                padding-bottom: 5px;
                 color: #FFF;
+                position: relative;
+                overflow: hidden;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 0;
+                    height: 2px;
+                    background-color: #FFF;
+                    transition: width 0.3s ease-in-out;
+                }
+
+                &:hover::before {
+                    width: 100%;
+                    transition: width 0.3s ease-in-out;
+                }
             }
         }
     }
