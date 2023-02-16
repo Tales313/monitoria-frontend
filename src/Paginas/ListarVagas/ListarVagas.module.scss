@@ -6,6 +6,13 @@
     }
 }
 
+.vagaSelecionada {
+    background-color: #2e9d46;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 .vagaDesabilitada {
     background-color: #e3dfd5 !important;
 }
