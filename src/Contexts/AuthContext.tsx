@@ -1,7 +1,6 @@
 import React, {createContext, ReactNode, useCallback, useContext, useState} from 'react'
-import {getEditalAtivo, postAutenticar} from "../Http";
+import {postAutenticar} from "../Http";
 import IAutenticacaoResponse from "../Interfaces/IAutenticacaoResponse";
-import {Navigate} from "react-router-dom";
 
 type UserContextProps = {
     children: ReactNode;
@@ -9,6 +8,7 @@ type UserContextProps = {
 
 interface User {
     login: string;
+    perfil: string
 }
 
 interface AuthState {
@@ -37,7 +37,6 @@ export const AuthContextProvider = ({children}: UserContextProps) => {
     const [data, setData] = useState<AuthState>(() => {
         const token = localStorage.getItem('@Monitoria:token');
         const user = localStorage.getItem('@Monitoria:user');
-
         if (token && user) {
             return { token, user: JSON.parse(user) };
         }
@@ -48,7 +47,7 @@ export const AuthContextProvider = ({children}: UserContextProps) => {
 
         const response = await postAutenticar(login, senha)
         const token = response.data.token;
-        const user = {login};
+        const user = {login, 'perfil': response.data.perfil}
         localStorage.setItem('@Monitoria:token', token);
         localStorage.setItem('@Monitoria:user', JSON.stringify(user));
         setData({token, user})

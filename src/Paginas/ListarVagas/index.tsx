@@ -25,6 +25,7 @@ import IInscricaoRequest from "../../Interfaces/IInscricaoRequest";
 const ListarVagas = () => {
 
     const { user, token } = useAuth()
+    const perfilAluno = user.perfil == 'ALUNO'
     const [edital, setEdital] = useState<IEdital>()
     const [vagas, setVagas] = useState<IVaga[]>([])
     const [idVaga, setIdVaga] = useState<number>()
@@ -70,7 +71,9 @@ const ListarVagas = () => {
             }
         }
 
-        chamarEndpointProximaOpcao()
+        if(perfilAluno)
+            chamarEndpointProximaOpcao()
+
         chamarEditalEVagas()
 
     }, [])
@@ -154,7 +157,7 @@ const ListarVagas = () => {
                                 {vagas.map(item =>
                                     <TableRow
                                         id={'vaga-'+item.id}
-                                        className={encerrado? styles.vagaFim : styles.vaga}
+                                        className={encerrado || !perfilAluno? styles.vagaDesabilitada : styles.vaga}
                                         key={item.id} onClick={() => selecionarDisciplina(item.id)}>
                                         <TableCell>{item.disciplina}</TableCell>
                                         <TableCell>{item.periodo}</TableCell>
@@ -172,7 +175,7 @@ const ListarVagas = () => {
                         alignItems: 'flex-start',
                     }}>
                         <TextField
-                            disabled={encerrado}
+                            disabled={encerrado || ! perfilAluno}
                             margin="normal"
                             value={notaDisciplina}
                             onChange={evento => setNotaDisciplina(evento.target.value)}
@@ -181,7 +184,7 @@ const ListarVagas = () => {
                         />
 
                         <TextField
-                            disabled={encerrado}
+                            disabled={encerrado || !perfilAluno}
                             margin="normal"
                             value={cre}
                             onChange={evento => setCre(evento.target.value)}
@@ -190,7 +193,7 @@ const ListarVagas = () => {
                         />
 
                         <Button
-                            className={encerrado? styles.botaoDesabilitado : ''}
+                            className={encerrado || !perfilAluno? styles.botaoDesabilitado : ''}
                             type="submit"
                             sx={{alignSelf: 'center'}}
                             id='botaoSubmit'
