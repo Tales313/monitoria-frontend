@@ -78,17 +78,6 @@ const ListarVagas = () => {
 
     }, [])
 
-    const selecionarDisciplina = (idVaga: number) => {
-        let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)
-        vagas.forEach(vaga => vaga.style.backgroundColor = 'white')
-
-        let vaga = document.getElementById('vaga-' + idVaga);
-        if(vaga)
-            vaga.style.backgroundColor = '#2e9d46'
-
-        setIdVaga(idVaga)
-    }
-
     const inscrever = async (evento: React.FormEvent<HTMLFormElement>) => {
         evento.preventDefault()
 
@@ -121,17 +110,26 @@ const ListarVagas = () => {
             const respostaProximaOpcao = await getProximaOpcao(token)
             setProximaOpcao(respostaProximaOpcao.data.opcao)
 
-            let vagas = Array.from(document.getElementsByClassName(styles.vaga) as HTMLCollectionOf<HTMLElement>)
             if(respostaProximaOpcao.data.opcao === -1) {
                 setEncerrado(true)
             } else {
-                vagas.forEach(vaga => vaga.style.backgroundColor = 'white')
                 setIdVaga(NaN)
             }
         } catch (e: any) {
             alert(e.response.data.message)
         }
 
+    }
+
+    const escolherClasseVaga = (idVagaClicada: number) => {
+        let desabilitado = encerrado || !perfilAluno
+
+        if(desabilitado)
+            return styles.vagaDesabilitada
+        else if(idVagaClicada == idVaga)
+            return styles.vagaSelecionada
+        else
+            return styles.vaga
     }
 
     if (!user || !token) {
@@ -157,8 +155,8 @@ const ListarVagas = () => {
                                 {vagas.map(item =>
                                     <TableRow
                                         id={'vaga-'+item.id}
-                                        className={encerrado || !perfilAluno? styles.vagaDesabilitada : styles.vaga}
-                                        key={item.id} onClick={() => selecionarDisciplina(item.id)}>
+                                        className={escolherClasseVaga(item.id)}
+                                        key={item.id} onClick={() => setIdVaga(item.id)}>
                                         <TableCell>{item.disciplina}</TableCell>
                                         <TableCell>{item.periodo}</TableCell>
                                         <TableCell>{item.quantidade}</TableCell>
